@@ -20,13 +20,15 @@ func (app *application) readIDParam(r *http.Request) (int64, error) {
 	return id, nil
 }
 
-func (app *application) writeJSON(w http.ResponseWriter, status int, data interface{}, headers http.Header) error {
-	js, err := json.Marshal(data)
+type envelope map[string]interface{}
+
+func (app *application) writeJSON(w http.ResponseWriter, status int, data envelope, headers http.Header) error {
+	json, err := json.Marshal(data)
 	if err != nil {
 		return err
 	}
 
-	js = append(js, '\n')
+	json = append(json, '\n')
 
 	for key, value := range headers {
 		w.Header()[key] = value
@@ -34,7 +36,7 @@ func (app *application) writeJSON(w http.ResponseWriter, status int, data interf
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
-	w.Write(js)
+	w.Write(json)
 
 	return nil
 }
