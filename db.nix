@@ -14,14 +14,18 @@ mkShell {
   # Postgresql activation
   shellHook = ''
     export PGDATA="$PWD/db"
-    export SOCKET_DIRECTORIES="$PWD/sockets"
-    mkdir $SOCKET_DIRECTORIES
+    export SOCKET_DIRECTORIES="$PGDATA/sockets"
+    export PGHOST="$SOCKET_DIRECTORIES"
     if ! [ -d $PGDATA ]; then
-      initdb
+      initdb -D $PGDATA
+      mkdir $SOCKET_DIRECTORIES
+      echo "unix_socket_directories = '$SOCKET_DIRECTORIES'" >> $PGDATA/postgresql.conf
     fi
-    echo "unix_socket_directories = '$SOCKET_DIRECTORIES'" >> $PGDATA/postgresql.conf
     pg_ctl -l $PGDATA/logfile start
-    createuser postgres --createdb -h localhost
+    if ! [ -d $PGDATA ]; then
+      createuser postgres --createdb -h localhost
+    fi
+
     function end {
       echo "Shutting down the database..."
       pg_ctl stop
