@@ -6,3 +6,6 @@ tmp/
 
 # Postgresql
 db/
+
+# compiled binaries
+bin/
