@@ -1,7 +1,4 @@
-ifneq (,$(wildcard ./.env))
-    include .env
-    export
-endif
+include .env
 
 ## help: print this help message
 .PHONY: help
