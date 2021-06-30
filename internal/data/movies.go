@@ -170,10 +170,10 @@ func (m MovieModel) GetAll(title string, genres []string, filters Filters) ([]*M
 	args := []interface{}{title, pq.Array(genres), filters.limit(), filters.offset()}
 
 	rows, err := m.DB.QueryContext(ctx, query, args...)
-	defer rows.Close()
 	if err != nil {
 		return nil, Metadata{}, err
 	}
+	defer rows.Close()
 
 	totalRecords := 0
 	movies := []*Movie{}
